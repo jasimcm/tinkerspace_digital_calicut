@@ -45,8 +45,9 @@ const UserCard = ({ card, CARD_HEIGHT }) => {
         alt={card.name}
         purpose={displayPurpose}
         purposeColor={purposeColor}
+        cardHeight={CARD_HEIGHT}
       />
-      <UserBadges name={card.name} />
+      <UserBadges name={card.name} cardHeight={CARD_HEIGHT} />
       <UserInfo
         card={card}
         textRef={textRef}

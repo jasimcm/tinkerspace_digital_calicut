@@ -16,12 +16,17 @@ function AchievementBadge({ type, alt }) {
   );
 }
 
-export default function UserBadges({ name }) {
+// Height reserved below the image for the name/subtitle text (UserInfo) —
+// must match UserImage.jsx so the badge straddles the image/info boundary.
+const INFO_HEIGHT = 47;
+
+export default function UserBadges({ name, cardHeight }) {
   const userBadges = USER_BADGES[name] || [];
+  const imageHeight = cardHeight - INFO_HEIGHT;
   return (
     <div style={{
       position: 'absolute',
-      top: '170px',
+      top: `${imageHeight - 40}px`,
       right: '4px',
       width: '56px',
       height: '56px',

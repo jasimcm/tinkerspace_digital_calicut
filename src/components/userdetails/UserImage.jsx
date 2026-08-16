@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 
-export default function CardImage({ src, alt, purpose, purposeColor }) {
+// Height reserved below the image for the name/subtitle text (UserInfo).
+const INFO_HEIGHT = 47;
+
+export default function CardImage({ src, alt, purpose, purposeColor, cardHeight }) {
   const [imageError, setImageError] = useState(false);
   const firstLetter = alt ? alt.charAt(0).toUpperCase() : '?';
+  const imageHeight = cardHeight - INFO_HEIGHT;
 
   return (
-    <div className="w-full h-[210px] overflow-hidden relative border-b border-gray-100 bg-gray-50 rounded-t-lg">
+    <div
+      className="w-full overflow-hidden relative border-b border-gray-100 bg-gray-50 rounded-t-lg"
+      style={{ height: `${imageHeight}px` }}
+    >
       {(!src || imageError) ? (
         <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
           <span className="text-6xl font-bold">{firstLetter}</span>

@@ -4,7 +4,7 @@ import useGridLayout from '../../hooks/useGridLayout';
 import { getMakerCardsPerPage } from '../../utils/layout/makerGrid';
 
 const CARD_WIDTH = 211;
-const CARD_HEIGHT = 257;
+const CARD_HEIGHT = 225;
 const GAP = 32;
 const PAGE_INTERVAL = 20000;
 
