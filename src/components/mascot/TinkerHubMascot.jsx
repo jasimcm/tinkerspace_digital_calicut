@@ -23,11 +23,13 @@ const WATCHDOG_INTERVAL_MS = 5000;
 const WATCHDOG_SCHEDULER_GRACE_MS = 12000;
 const WATCHDOG_ANIMATION_GRACE_MS = 15000;
 const MASCOT_ASSET_VERSION = process.env.REACT_APP_MASCOT_ASSET_VERSION || 'mascot-watchdog-v1';
-// process.env.PUBLIC_URL is "." when `homepage` in package.json is relative (our GitHub
-// Pages setup) — concatenated with the leading-slash asset paths below (e.g. "/images/...")
-// that yields the same "./images/..." relative reference the rest of the app already uses,
-// which resolves correctly under a subpath. Treating "." as empty here 404s under a subpath.
-const PUBLIC_ASSET_BASE = process.env.PUBLIC_URL;
+// Mascot asset URLs end up as CSS custom properties consumed from the bundled
+// stylesheet (src/styles/index.css), so a relative url() here resolves against
+// that stylesheet's location (e.g. /static/css/), not the document — a plain
+// PUBLIC_URL-based relative path 404s once under a subpath deploy (GitHub
+// Pages). Build a fully-qualified absolute URL from the page's own base
+// instead, which is immune to that resolution context.
+const PUBLIC_ASSET_BASE = document.baseURI.replace(/\/$/, '');
 const FALLBACK_STICKER_IMAGE = '/images/dont-look.png';
 
 function randomDuration(min, max) {
