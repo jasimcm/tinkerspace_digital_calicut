@@ -23,7 +23,11 @@ const WATCHDOG_INTERVAL_MS = 5000;
 const WATCHDOG_SCHEDULER_GRACE_MS = 12000;
 const WATCHDOG_ANIMATION_GRACE_MS = 15000;
 const MASCOT_ASSET_VERSION = process.env.REACT_APP_MASCOT_ASSET_VERSION || 'mascot-watchdog-v1';
-const PUBLIC_ASSET_BASE = process.env.PUBLIC_URL === '.' ? '' : process.env.PUBLIC_URL;
+// process.env.PUBLIC_URL is "." when `homepage` in package.json is relative (our GitHub
+// Pages setup) — concatenated with the leading-slash asset paths below (e.g. "/images/...")
+// that yields the same "./images/..." relative reference the rest of the app already uses,
+// which resolves correctly under a subpath. Treating "." as empty here 404s under a subpath.
+const PUBLIC_ASSET_BASE = process.env.PUBLIC_URL;
 const FALLBACK_STICKER_IMAGE = '/images/dont-look.png';
 
 function randomDuration(min, max) {
