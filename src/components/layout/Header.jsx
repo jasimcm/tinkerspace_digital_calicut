@@ -47,7 +47,7 @@ export default React.memo(function Header({ totalMakers, isDarkMode, setManualTh
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
           <span className="font-bold tracking-widest text-gray-800 dark:text-gray-200 text-sm uppercase transition-colors duration-500">
-            LiveFeed
+            TinkerSpace Calicut
           </span>
         </div>
 

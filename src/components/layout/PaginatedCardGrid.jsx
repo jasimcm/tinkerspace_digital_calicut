@@ -27,12 +27,7 @@ export default function PaginatedCardGrid({ data, isActive = true }) {
     if (!isActive) return;
 
     intervalRef.current = setInterval(() => {
-      setPage((p) => {
-        // Stop at the last page instead of looping back to 0, 
-        // because the orchestrator will transition to the calendar view.
-        if (p + 1 >= totalPages) return p;
-        return p + 1;
-      });
+      setPage((p) => (p + 1) % totalPages);
     }, PAGE_INTERVAL);
     
     return () => clearInterval(intervalRef.current);

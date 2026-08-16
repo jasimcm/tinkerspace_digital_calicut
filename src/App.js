@@ -1,40 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { fetchData } from './utils/api/fetchData';
 import { removeDuplicates } from './utils/helpers/removeDuplicates';
-import { getMakerCardsPerPage } from './utils/layout/makerGrid';
-import DISPLAY_CONFIG from './utils/constants/displayConfig';
-import useDisplayOrchestrator from './hooks/useDisplayOrchestrator';
-import useGridLayout from './hooks/useGridLayout';
 import Header from './components/layout/Header';
 import PaginatedCardGrid from './components/layout/PaginatedCardGrid';
-import CalendarDashboard from './components/layout/CalendarDashboard';
 import TinkerHubMascot from './components/mascot/TinkerHubMascot';
 
-const { VIEWS } = DISPLAY_CONFIG;
-
-// Constants matching those in PaginatedCardGrid
-const CARD_WIDTH = 211;
-const CARD_HEIGHT = 257;
-const GAP = 32;
+const CURRENT_VIEW = 'makers';
 
 function App() {
     const [data, setData] = useState([]);
-    const [hasFetched, setHasFetched] = useState(false);
     const [loadingProgress, setLoadingProgress] = useState(0);
     const [startAnimation, setStartAnimation] = useState(false);
     const [isAppReady, setIsAppReady] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [manualTheme, setManualTheme] = useState(null);
-
-    // Calculate layout here to determine totalPages for orchestrator
-    const { cols, rows } = useGridLayout(CARD_WIDTH, CARD_HEIGHT, GAP);
-    const cardsPerPage = getMakerCardsPerPage(cols, rows);
-    const totalPages = Math.ceil(data.length / cardsPerPage) || 1;
-
-    // ── Display Orchestration Engine ─────────────────────────────
-    const { currentView } = useDisplayOrchestrator(data.length, totalPages, hasFetched);
-    const showMakers = currentView === VIEWS.MAKERS;
-    const showCalendar = currentView === VIEWS.CALENDAR;
 
     useEffect(() => {
         // Keep screen awake
@@ -50,12 +29,10 @@ function App() {
 
         const fetchRecords = async () => {
             try {
-                const records = await fetchData(); 
+                const records = await fetchData();
                 setData(removeDuplicates(records));
             } catch (error) {
                 console.error('Fetch failed:', error);
-            } finally {
-                setHasFetched(true);
             }
         };
 
@@ -177,25 +154,9 @@ function App() {
                         <Header totalMakers={data.length} isDarkMode={isDarkMode} setManualTheme={setManualTheme} />
                     </div>
 
-                    {/* Content area below header — views crossfade here */}
+                    {/* Content area below header */}
                     <div className="flex-1 relative min-h-0">
-                        {/* ── Display Orchestration: Maker View ──────────── */}
-                        <div
-                            className={`absolute inset-0 flex flex-col transition-opacity duration-700 ease-in-out ${
-                                showMakers ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-                            }`}
-                        >
-                            <PaginatedCardGrid data={data} isActive={showMakers} />
-                        </div>
-
-                        {/* ── Display Orchestration: Calendar View ───────── */}
-                        <div
-                            className={`absolute inset-0 flex flex-col transition-opacity duration-700 ease-in-out ${
-                                showCalendar ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-                            }`}
-                        >
-                            <CalendarDashboard />
-                        </div>
+                        <PaginatedCardGrid data={data} isActive />
                     </div>
                 </div>
                 
@@ -245,7 +206,7 @@ function App() {
 
                     <TinkerHubMascot
                         makerCount={data.length}
-                        currentView={currentView}
+                        currentView={CURRENT_VIEW}
                         isVisible={isAppReady}
                     />
                 </div>

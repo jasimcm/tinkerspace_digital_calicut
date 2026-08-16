@@ -1,8 +1,17 @@
-# TinkerSpace Digital
+# TinkerSpace Calicut — Digital Display
 
-Digital display app for TinkerSpace — rotates between maker profiles and the event calendar on a kiosk-style screen.
+Digital display app for **TinkerSpace Calicut** — shows a live, auto-refreshing grid
+of currently checked-in makers on a kiosk-style screen.
 
-**Live site:** deployed from `main` via [Netlify](https://tinkerspace-display.netlify.app/)
+This is based on [tinkerhub/tinkerspace_digital](https://github.com/tinkerhub/tinkerspace_digital),
+adapted for the Calicut space:
+
+- Points at the shared TinkerHub check-in API with `space_id=2` (Calicut), via a new
+  `REACT_APP_SPACE_ID` env var.
+- The Calendar Dashboard view (which needs a separate SpaceCalendar API key) has been
+  removed — this instance only shows the maker check-in grid.
+
+**Live site:** https://jasimcm.github.io/tinkerspace_digital_calicut/ (GitHub Pages)
 
 ## Prerequisites
 
@@ -14,17 +23,15 @@ This project uses pnpm only. `npm install` and `yarn` are blocked.
 ## Local setup
 
 ```bash
-git clone https://github.com/tinkerhub/tinkerspace_digital.git
-cd tinkerspace_digital
+git clone https://github.com/jasimcm/tinkerspace_digital_calicut.git
+cd tinkerspace_digital_calicut
 pnpm install
 pnpm dev:mock
 ```
 
 The app runs at [http://localhost:3000](http://localhost:3000).
 
-### Local development without private backend access
-
-Use:
+### Local development without the real backend
 
 ```bash
 pnpm dev:mock
@@ -33,18 +40,9 @@ pnpm dev:mock
 This starts:
 
 - the React dev server on `http://localhost:3000`
-- a local mock API server on `http://localhost:4010`
+- a local mock API server on `http://localhost:4010` exposing `GET /checkin/active`
 
-The mock server exposes the same read endpoints the screen uses in production:
-
-- `GET /checkin/active`
-- `GET /api/v1/display`
-
-The seeded mock payloads include active makers, a live event, upcoming events, and a populated calendar so contributors can work on the UI without access to the internal TinkerHub services.
-
-### Local setup with private backend access
-
-If you have access to the real backend services:
+### Local setup with the real backend
 
 ```bash
 cp .env.example .env
@@ -58,9 +56,8 @@ Copy `.env.example` to `.env` and set:
 
 | Variable | Description |
 |---|---|
-| `REACT_APP_API_BASE_URL` | Base URL for maker/user data |
-| `REACT_APP_SPACECALENDAR_API` | Space calendar API endpoint |
-| `REACT_APP_SPACECALENDAR_API_KEY` | API key for the calendar service |
+| `REACT_APP_API_BASE_URL` | Base URL for the check-in API (`https://app-api.tinkerhub.org`) |
+| `REACT_APP_SPACE_ID` | The TinkerHub space id to show makers for (`2` for Calicut) |
 
 ## Scripts
 
@@ -72,54 +69,17 @@ Copy `.env.example` to `.env` and set:
 | `pnpm build` | Create a production build |
 | `pnpm build:mock` | Create a production build configured against local mock API URLs |
 | `pnpm test` | Run tests |
-| `pnpm deploy` | Build and publish to GitHub Pages (legacy; production uses Netlify) |
+| `pnpm deploy` | Build and publish to GitHub Pages |
 
-## Deployment (Netlify)
+## Deployment (GitHub Pages)
 
-Production builds run on Netlify from the **`main`** branch. `netlify.toml` is already configured:
+```bash
+pnpm deploy
+```
 
-- **Build command:** `pnpm run build`
-- **Publish directory:** `build`
-- **Node version:** 22
+This builds the app and publishes `build/` to the `gh-pages` branch via the `gh-pages`
+package. Enable GitHub Pages in the repo's **Settings → Pages**, with source set to the
+`gh-pages` branch, if it isn't already.
 
-Set these environment variables in the Netlify site dashboard (**Site configuration → Environment variables**):
-
-| Variable | Description |
-|---|---|
-| `REACT_APP_API_BASE_URL` | Base URL for maker/user data |
-| `REACT_APP_SPACECALENDAR_API` | Space calendar API endpoint |
-| `REACT_APP_SPACECALENDAR_API_KEY` | API key for the calendar service |
-
-If the Netlify build fails on Corepack/pnpm version resolution, add `COREPACK_INTEGRITY_KEYS=0` as a build environment variable.
-
-## Contributing
-
-### For contributors
-
-1. Fork [tinkerhub/tinkerspace_digital](https://github.com/tinkerhub/tinkerspace_digital) on GitHub.
-2. Clone your fork:
-   ```bash
-   git clone https://github.com/<your-username>/tinkerspace_digital.git
-   cd tinkerspace_digital
-   ```
-3. Add the upstream remote and create a branch off `develop`:
-   ```bash
-   git remote add upstream https://github.com/tinkerhub/tinkerspace_digital.git
-   git fetch upstream
-   git checkout -b your-feature-branch upstream/develop
-   ```
-4. Make your changes, then commit and push to your fork:
-   ```bash
-   git add .
-   git commit -m "describe your change"
-   git push origin your-feature-branch
-   ```
-5. Open a pull request into **`develop`** on `tinkerhub/tinkerspace_digital`.
-
-Keep PRs focused and test locally with `pnpm dev` and `pnpm build` before submitting.
-
-### For maintainers
-
-- **`develop`** is the integration branch — all contributor PRs land here first.
-- **`main`** is the production branch — merging to `main` triggers the Netlify production deploy.
-- After changes on `develop` are tested and verified, merge `develop` → `main` to release to production.
+Set `REACT_APP_API_BASE_URL` and `REACT_APP_SPACE_ID` in `.env` (not committed) before
+running `pnpm build` / `pnpm deploy` so the production bundle points at the real API.
