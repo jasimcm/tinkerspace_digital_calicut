@@ -14,19 +14,58 @@ function App() {
     const [isAppReady, setIsAppReady] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [manualTheme, setManualTheme] = useState(null);
+    const [needsFullscreenPrompt, setNeedsFullscreenPrompt] = useState(false);
 
+    // Fullscreen + wake lock. Most browsers (including many Smart TV/Android TV
+    // browsers) block requestFullscreen() unless it's called from a real user
+    // gesture, so the automatic attempt on load often silently fails. As a
+    // fallback, retry on the very first keydown/click/touch — a TV remote's
+    // OK/select button fires keydown, which qualifies as a gesture — and show
+    // a brief prompt if fullscreen hasn't kicked in a moment after load.
     useEffect(() => {
-        // Keep screen awake
-        const wakeLock = async () => {
+        const enterFullscreen = async () => {
             try {
-                await document.documentElement.requestFullscreen();
+                if (!document.fullscreenElement) {
+                    await document.documentElement.requestFullscreen();
+                }
+            } catch (err) {
+                console.log('Fullscreen request error:', err);
+            }
+            try {
                 await navigator.wakeLock.request('screen');
             } catch (err) {
                 console.log('Wake Lock error:', err);
             }
         };
-        wakeLock();
+        enterFullscreen();
 
+        const promptTimer = setTimeout(() => {
+            if (!document.fullscreenElement) setNeedsFullscreenPrompt(true);
+        }, 1500);
+
+        const gestureController = new AbortController();
+        const retryOnGesture = () => {
+            enterFullscreen();
+            setNeedsFullscreenPrompt(false);
+            gestureController.abort();
+        };
+        document.addEventListener('keydown', retryOnGesture, { signal: gestureController.signal });
+        document.addEventListener('click', retryOnGesture, { signal: gestureController.signal });
+        document.addEventListener('touchstart', retryOnGesture, { signal: gestureController.signal });
+
+        const handleFullscreenChange = () => {
+            if (document.fullscreenElement) setNeedsFullscreenPrompt(false);
+        };
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+        return () => {
+            clearTimeout(promptTimer);
+            gestureController.abort();
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        };
+    }, []);
+
+    useEffect(() => {
         const fetchRecords = async () => {
             try {
                 const records = await fetchData();
@@ -121,7 +160,14 @@ function App() {
 
     return (
         <div className="relative w-screen h-screen overflow-hidden font-geist text-gray-800 dark:text-gray-100 z-0">
-            
+
+            {/* Fullscreen Prompt — shown only if the automatic attempt was blocked */}
+            {needsFullscreenPrompt && (
+                <div className="absolute inset-0 z-[200] flex items-center justify-center bg-black/80 text-white text-2xl md:text-3xl font-semibold tracking-wide text-center px-8">
+                    Press any button to enter fullscreen
+                </div>
+            )}
+
             {/* Loading Overlay */}
             <div 
                 className={`absolute inset-0 z-40 flex items-center justify-center transition-opacity duration-1000 ${
