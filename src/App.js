@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fetchData } from './utils/api/fetchData';
 import { removeDuplicates } from './utils/helpers/removeDuplicates';
 import Header from './components/layout/Header';
@@ -15,6 +15,23 @@ function App() {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [manualTheme, setManualTheme] = useState(null);
     const [needsFullscreenPrompt, setNeedsFullscreenPrompt] = useState(false);
+    const headerRef = useRef(null);
+    const [headerHeight, setHeaderHeight] = useState(180);
+
+    // Measure the header's actual rendered height (it varies by breakpoint —
+    // e.g. the clock stacks below the pill on narrow screens instead of sitting
+    // in the corner) so the card grid below always gets the right leftover space,
+    // on any screen size, without a hardcoded assumption.
+    useEffect(() => {
+        const node = headerRef.current;
+        if (!node || typeof ResizeObserver === 'undefined') return undefined;
+        const observer = new ResizeObserver((entries) => {
+            const entry = entries[0];
+            if (entry) setHeaderHeight(entry.contentRect.height);
+        });
+        observer.observe(node);
+        return () => observer.disconnect();
+    }, []);
 
     // Fullscreen + wake lock. Most browsers (including many Smart TV/Android TV
     // browsers) block requestFullscreen() unless it's called from a real user
@@ -174,7 +191,7 @@ function App() {
                     startAnimation ? 'opacity-0 pointer-events-none' : 'opacity-100'
                 }`}
             >
-                <div className="font-geist text-7xl md:text-8xl font-extrabold tracking-tighter text-gray-800 dark:text-gray-200 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-28 transition-colors duration-500">
+                <div className="font-geist text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tighter text-gray-800 dark:text-gray-200 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-28 transition-colors duration-500">
                     {loadingProgress}%
                 </div>
             </div>
@@ -184,9 +201,9 @@ function App() {
                 src={`${process.env.PUBLIC_URL}/images/vector1.png`} 
                 alt="Decoration" 
                 className={`absolute z-50 object-contain pointer-events-none transition-all duration-[2000ms] ease-in-out ${
-                    startAnimation 
-                        ? 'top-8 left-12 w-12 opacity-90 translate-x-0 translate-y-0' 
-                        : 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 opacity-100'
+                    startAnimation
+                        ? 'top-3 left-3 w-7 sm:top-5 sm:left-6 sm:w-9 md:top-8 md:left-12 md:w-12 opacity-90 translate-x-0 translate-y-0'
+                        : 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 sm:w-32 opacity-100'
                 }`}
             />
 
@@ -196,32 +213,32 @@ function App() {
 
                 {/* ── Shared Header (single instance, never remounts) ─── */}
                 <div className="flex flex-col w-full h-full relative">
-                    <div className="relative z-20">
+                    <div className="relative z-20" ref={headerRef}>
                         <Header totalMakers={data.length} isDarkMode={isDarkMode} setManualTheme={setManualTheme} />
                     </div>
 
                     {/* Content area below header */}
                     <div className="flex-1 relative min-h-0">
-                        <PaginatedCardGrid data={data} isActive />
+                        <PaginatedCardGrid data={data} isActive headerHeight={headerHeight} />
                     </div>
                 </div>
-                
+
                 {/* Bottom Quote */}
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none z-10">
-                    <div className="flex items-center gap-3">
-                        <p className="font-instrument text-[#0a192f] dark:text-white text-4xl italic tracking-wide transition-colors duration-500 opacity-60">
+                <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 pointer-events-none z-10 px-4 max-w-[80vw]">
+                    <div className="flex items-center justify-center gap-2 sm:gap-3">
+                        <p className="font-instrument text-[#0a192f] dark:text-white text-lg sm:text-2xl md:text-4xl italic tracking-wide transition-colors duration-500 opacity-60 whitespace-nowrap">
                             "Community is my spinach"
                         </p>
-                        <img 
-                            src={`${process.env.PUBLIC_URL}/images/spinach.png`} 
-                            alt="Spinach" 
-                            className="w-10 h-10 object-contain drop-shadow-md"
+                        <img
+                            src={`${process.env.PUBLIC_URL}/images/spinach.png`}
+                            alt="Spinach"
+                            className="w-5 h-5 sm:w-7 sm:h-7 md:w-10 md:h-10 object-contain drop-shadow-md shrink-0"
                         />
                     </div>
                 </div>
 
                 {/* Bottom-Right Controls / Information */}
-                <div className="absolute bottom-8 right-12 z-50 flex flex-col items-end justify-end gap-6 pointer-events-none">
+                <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-8 md:bottom-8 md:right-12 z-50 flex flex-col items-end justify-end gap-6 pointer-events-none">
                     {/* QR Code (Hidden)
                     <div className="flex items-center gap-4 bg-white/40 dark:bg-white/5 backdrop-blur-2xl px-4 py-3 rounded-2xl border border-white/60 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] transition-all duration-500 hover:scale-105 pointer-events-auto cursor-pointer group">
                         <div className="flex flex-col text-right">
