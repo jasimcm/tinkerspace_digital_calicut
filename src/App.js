@@ -40,6 +40,25 @@ function App() {
     // OK/select button fires keydown, which qualifies as a gesture — and show
     // a brief prompt if fullscreen hasn't kicked in a moment after load.
     useEffect(() => {
+        const wakeLockRef = { current: null };
+
+        // The Wake Lock API auto-releases whenever the page is backgrounded
+        // (tab-switch, screen lock, some TV app-switcher behavior) — that's
+        // the usual reason a kiosk screen still goes dark despite requesting
+        // it once on load. Re-acquire it every time the page becomes visible
+        // again so the screen stays on until someone closes the tab/app.
+        const requestWakeLock = async () => {
+            try {
+                if (!('wakeLock' in navigator)) return;
+                wakeLockRef.current = await navigator.wakeLock.request('screen');
+                wakeLockRef.current.addEventListener('release', () => {
+                    wakeLockRef.current = null;
+                });
+            } catch (err) {
+                console.log('Wake Lock error:', err);
+            }
+        };
+
         const enterFullscreen = async () => {
             try {
                 if (!document.fullscreenElement) {
@@ -48,13 +67,16 @@ function App() {
             } catch (err) {
                 console.log('Fullscreen request error:', err);
             }
-            try {
-                await navigator.wakeLock.request('screen');
-            } catch (err) {
-                console.log('Wake Lock error:', err);
-            }
+            requestWakeLock();
         };
         enterFullscreen();
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible' && !wakeLockRef.current) {
+                requestWakeLock();
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
         const promptTimer = setTimeout(() => {
             if (!document.fullscreenElement) setNeedsFullscreenPrompt(true);
@@ -79,6 +101,7 @@ function App() {
             clearTimeout(promptTimer);
             gestureController.abort();
             document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
     }, []);
 
