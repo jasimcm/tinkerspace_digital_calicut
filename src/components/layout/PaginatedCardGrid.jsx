@@ -30,7 +30,12 @@ export default function PaginatedCardGrid({ data, isActive = true, headerHeight 
     return () => clearInterval(intervalRef.current);
   }, [totalPages, isActive]);
 
-  const start = page * cardsPerPage;
+  // `page` can momentarily point past the current page count when data.length
+  // shrinks across a page-count boundary without cols/rows changing (e.g.
+  // attendees checking out). Clamp on render so we never slice into an empty
+  // range and show a blank grid until the rotation timer wraps it back.
+  const safePage = totalPages > 0 ? page % totalPages : 0;
+  const start = safePage * cardsPerPage;
   const end = start + cardsPerPage;
   const pageCards = data.slice(start, end);
   const emptySlots = totalSlots - pageCards.length;
@@ -53,7 +58,7 @@ export default function PaginatedCardGrid({ data, isActive = true, headerHeight 
         {pageCards.map((card, index) => {
           return (
             <div
-              key={card.id || card.name || index}
+              key={card.membershipId || card.name || index}
               className="transition-opacity duration-500"
               style={{
                 width: cardWidth,
@@ -84,7 +89,7 @@ export default function PaginatedCardGrid({ data, isActive = true, headerHeight 
             <div
               key={i}
               className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-500 ${
-                i === page
+                i === safePage
                   ? 'bg-gray-800 dark:bg-white scale-125 shadow-md'
                   : 'bg-gray-400/50 dark:bg-white/20 hover:bg-gray-500/50'
               }`}
