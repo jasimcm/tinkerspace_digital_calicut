@@ -8,11 +8,12 @@ tablets, desktops, and Android TV panels — there is no scrolling and no user n
 [`src/hooks/useGridLayout.js`](../src/hooks/useGridLayout.js) turns the viewport into a
 concrete grid on mount and on every `resize`:
 
-- The grid is chosen from compact layouts: 4x3, 5x3, 6x3, 6x4, 7x4, and 8x4. It selects
-  the smallest layout that fits the current maker count, then paginates after 8x4.
-- Card width scales by layout density rather than a single viewport cap: 4 columns use 80% of
+- The grid is chosen from large-card, two-row-first layouts: 3x1 (up to 2 makers), 3x2
+  (up to 5), 5x2 (up to 9), 6x2 (up to 11), 7x2 (up to 13), and 8x2 (up to 15). Capacity
+  is calculated after reserving the mascot area, and attendance above 15 paginates.
+- Card width scales by layout density rather than a single viewport cap: 3 columns use 90% of
   their available column width, 5 use 85%, 6 use 90%, 7 use 95%, and 8 use 100% (capped at
-  560px). This makes low-attendance layouts deliberately larger while retaining breathing room.
+  640px). This makes low-attendance layouts deliberately larger while retaining breathing room.
   Card height = `cardWidth * 225/211` (original aspect ratio), and width is reduced only when
   required for the selected layout to fit vertically.
 - `gap` = `clamp(24, vw * 0.012, 48)` px; `paddingX` = `clamp(48, vw * 0.04, 160)` px.
@@ -20,7 +21,7 @@ concrete grid on mount and on every `resize`:
   quote height, its responsive bottom offset, and a 24px buffer. Together these are excluded
   from the grid's usable height, so cards cannot overlap the quote.
 - The selected layout is centred rather than stretched edge-to-edge, preserving deliberate
-  breathing room on 4K TV panels. SSR / no-`window` fallback is a 4x3 grid.
+  breathing room on 4K TV panels. SSR / no-`window` fallback is a 3x2 grid.
 - The quote uses `clamp(1.125rem, 1.35vw, 3.25rem)` and its spinach icon uses
   `clamp(1.5rem, 1.5vw, 3.75rem)`, so both scale smoothly from laptop previews to 4K TVs.
 

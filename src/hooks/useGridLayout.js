@@ -8,7 +8,7 @@ import {
 // Height/width ratio of the original card design — preserved as cards scale.
 const CARD_ASPECT_RATIO = 225 / 211;
 const MIN_CARD_WIDTH = 190;
-const MAX_CARD_WIDTH = 560;
+const MAX_CARD_WIDTH = 640;
 
 const clamp = (min, value, max) => Math.min(max, Math.max(min, value));
 
@@ -18,7 +18,8 @@ function getMascotSize(vw) {
 }
 
 function getColumnFillRatio(cols) {
-  if (cols <= 4) return 0.8;
+  if (cols <= 3) return 0.9;
+  if (cols === 4) return 0.8;
   if (cols === 5) return 0.85;
   if (cols <= 6) return 0.9;
   if (cols === 7) return 0.95;
@@ -62,7 +63,7 @@ function computeLayout(headerHeight, makerCount, footerHeight) {
 export default function useGridLayout(headerHeight = 180, makerCount = 0, footerHeight = 160) {
   const [layout, setLayout] = useState(() =>
     typeof window === 'undefined'
-      ? { cols: 4, rows: 3, cardWidth: 211, cardHeight: 225, gap: 32, paddingX: 48, topInset: 32, footerHeight, mascotReservation: { cols: 1, rows: 1 }, cardsPerPage: 11 }
+      ? { cols: 3, rows: 2, cardWidth: 211, cardHeight: 225, gap: 32, paddingX: 48, topInset: 32, footerHeight, mascotReservation: { cols: 1, rows: 1 }, cardsPerPage: 5 }
       : computeLayout(headerHeight, makerCount, footerHeight)
   );
 
