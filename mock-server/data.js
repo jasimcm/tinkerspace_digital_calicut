@@ -41,6 +41,48 @@ const MOCK_MAKERS = [
     workingOn: 'Daily Prophet open house',
     avatar: '',
   },
+  {
+    membershipId: 'mk-007',
+    name: 'Harry Potter',
+    purpose: 'Working on a project',
+    workingOn: 'Marauder Map refresh',
+    avatar: '',
+  },
+  {
+    membershipId: 'mk-008',
+    name: 'Hermione Granger',
+    purpose: 'Self Learning',
+    workingOn: 'Advanced arithmancy notes',
+    avatar: '',
+  },
+  {
+    membershipId: 'mk-009',
+    name: 'Rubeus Hagrid',
+    purpose: 'On duty',
+    workingOn: 'Care of magical creatures desk',
+    avatar: '',
+  },
+  {
+    membershipId: 'mk-010',
+    name: 'Luna Lovegood',
+    purpose: 'Attending an event',
+    workingOn: 'Spectrespecs prototyping night',
+    avatar: '',
+  },
+  {
+    membershipId: 'mk-011',
+    name: 'Ron Weasley',
+    purpose: 'Working on a project',
+    projectName: 'Wizard chess scoreboard',
+    avatar: '',
+  },
+  {
+    membershipId: 'mk-012',
+    name: 'Ginny Weasley',
+    purpose: 'Visiting',
+    workingOn: 'Daily Prophet open house',
+    avatar: '',
+  },
 ];
 
 function getMockMakers() {

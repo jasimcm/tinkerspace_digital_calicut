@@ -17,18 +17,17 @@ function getMascotSize(vw) {
   return clamp(128, vw * 0.13, 192);
 }
 
-function computeLayout(headerHeight, makerCount) {
+function computeLayout(headerHeight, makerCount, footerHeight) {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
   const gap = clamp(24, vw * 0.012, 48);
   const paddingX = clamp(48, vw * 0.04, 160);
 
-  // Leave room below the grid for the page-dot indicator, bottom quote, and mascot.
-  const bottomReserve = clamp(160, vh * 0.15, 320);
+  const topInset = clamp(24, vh * 0.02, 56);
 
   const availableWidth = vw - paddingX * 2;
-  const availableHeight = vh - headerHeight - bottomReserve;
+  const availableHeight = vh - headerHeight - topInset - footerHeight;
 
   const mascotSize = getMascotSize(vw);
   const dimensionsFor = ({ cols, rows }) => {
@@ -49,24 +48,24 @@ function computeLayout(headerHeight, makerCount) {
   };
 
   const selected = getGridLayout(makerCount, (layout) => dimensionsFor(layout).cardsPerPage);
-  return { ...dimensionsFor(selected), gap, paddingX };
+  return { ...dimensionsFor(selected), gap, paddingX, topInset, footerHeight };
 }
 
-export default function useGridLayout(headerHeight = 180, makerCount = 0) {
+export default function useGridLayout(headerHeight = 180, makerCount = 0, footerHeight = 160) {
   const [layout, setLayout] = useState(() =>
     typeof window === 'undefined'
-      ? { cols: 4, rows: 3, cardWidth: 211, cardHeight: 225, gap: 32, paddingX: 48, mascotReservation: { cols: 1, rows: 1 }, cardsPerPage: 11 }
-      : computeLayout(headerHeight, makerCount)
+      ? { cols: 4, rows: 3, cardWidth: 211, cardHeight: 225, gap: 32, paddingX: 48, topInset: 32, footerHeight, mascotReservation: { cols: 1, rows: 1 }, cardsPerPage: 11 }
+      : computeLayout(headerHeight, makerCount, footerHeight)
   );
 
   useEffect(() => {
     function updateLayout() {
-      setLayout(computeLayout(headerHeight, makerCount));
+      setLayout(computeLayout(headerHeight, makerCount, footerHeight));
     }
     updateLayout();
     window.addEventListener('resize', updateLayout);
     return () => window.removeEventListener('resize', updateLayout);
-  }, [headerHeight, makerCount]);
+  }, [headerHeight, makerCount, footerHeight]);
 
   return layout;
 }

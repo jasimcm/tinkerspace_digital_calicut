@@ -5,10 +5,10 @@ import { isMascotSlot } from '../../utils/layout/makerGrid';
 
 const PAGE_INTERVAL = 20000;
 
-export default function PaginatedCardGrid({ data, isActive = true, headerHeight }) {
+export default function PaginatedCardGrid({ data, isActive = true, headerHeight, footerHeight = 160 }) {
   const {
-    cols, rows, cardWidth, cardHeight, gap, paddingX, mascotReservation, cardsPerPage,
-  } = useGridLayout(headerHeight, data.length);
+    cols, rows, cardWidth, cardHeight, gap, paddingX, topInset, mascotReservation, cardsPerPage,
+  } = useGridLayout(headerHeight, data.length, footerHeight);
   const totalSlots = cols * rows;
   const totalPages = Math.ceil(data.length / cardsPerPage) || 1;
   const [page, setPage] = useState(0);
@@ -43,7 +43,7 @@ export default function PaginatedCardGrid({ data, isActive = true, headerHeight 
   return (
     <div className="flex flex-col w-full h-full relative font-mono">
       <div
-        className="flex-1 w-full flex justify-between content-start py-[clamp(1rem,2vh,1.5rem)] mt-[clamp(1rem,2vh,1.5rem)]"
+        className="flex-1 w-full"
         style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${cols}, ${cardWidth}px)`,
@@ -51,6 +51,9 @@ export default function PaginatedCardGrid({ data, isActive = true, headerHeight 
           justifyContent: 'center',
           alignContent: 'center',
           gap: `${gap}px`,
+          boxSizing: 'border-box',
+          paddingTop: `${topInset}px`,
+          paddingBottom: `${footerHeight}px`,
           paddingLeft: `${paddingX}px`,
           paddingRight: `${paddingX}px`,
         }}

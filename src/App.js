@@ -16,7 +16,9 @@ function App() {
     const [manualTheme, setManualTheme] = useState(null);
     const [needsFullscreenPrompt, setNeedsFullscreenPrompt] = useState(false);
     const headerRef = useRef(null);
+    const quoteRef = useRef(null);
     const [headerHeight, setHeaderHeight] = useState(180);
+    const [footerHeight, setFooterHeight] = useState(160);
 
     // Measure the header's actual rendered height (it varies by breakpoint —
     // e.g. the clock stacks below the pill on narrow screens instead of sitting
@@ -31,6 +33,29 @@ function App() {
         });
         observer.observe(node);
         return () => observer.disconnect();
+    }, []);
+
+    // Keep the cards out of the quote's visual area. Measuring the rendered quote
+    // means a future font, copy, or icon-size change cannot reintroduce overlap.
+    useEffect(() => {
+        const node = quoteRef.current;
+        if (!node || typeof ResizeObserver === 'undefined') return undefined;
+        const updateFooterHeight = (height) => {
+            const bottomInset = Math.min(64, Math.max(24, window.innerHeight * 0.022));
+            setFooterHeight(Math.ceil(height + bottomInset + 24));
+        };
+        const handleResize = () => updateFooterHeight(node.getBoundingClientRect().height);
+        const observer = new ResizeObserver((entries) => {
+            const entry = entries[0];
+            if (entry) updateFooterHeight(entry.contentRect.height);
+        });
+        observer.observe(node);
+        updateFooterHeight(node.getBoundingClientRect().height);
+        window.addEventListener('resize', handleResize);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', handleResize);
+        };
     }, []);
 
     // Fullscreen + wake lock. Most browsers (including many Smart TV/Android TV
@@ -242,20 +267,24 @@ function App() {
 
                     {/* Content area below header */}
                     <div className="flex-1 relative min-h-0">
-                        <PaginatedCardGrid data={data} isActive headerHeight={headerHeight} />
+                        <PaginatedCardGrid data={data} isActive headerHeight={headerHeight} footerHeight={footerHeight} />
                     </div>
                 </div>
 
                 {/* Bottom Quote */}
-                <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 pointer-events-none z-10 px-4 max-w-[80vw]">
+                <div
+                    ref={quoteRef}
+                    className="absolute left-1/2 -translate-x-1/2 pointer-events-none z-10 px-4 max-w-[80vw]"
+                    style={{ bottom: 'clamp(1.5rem, 2.2vh, 4rem)' }}
+                >
                     <div className="flex items-center justify-center gap-2 sm:gap-3">
-                        <p className="font-instrument text-[#0a192f] dark:text-white text-lg sm:text-2xl md:text-4xl italic tracking-wide transition-colors duration-500 opacity-60 whitespace-nowrap">
+                        <p className="font-instrument text-[#0a192f] dark:text-white text-[clamp(1.125rem,1.35vw,3.25rem)] italic tracking-wide transition-colors duration-500 opacity-60 whitespace-nowrap">
                             "Community is my spinach"
                         </p>
                         <img
                             src={`${process.env.PUBLIC_URL}/images/spinach.png`}
                             alt="Spinach"
-                            className="w-5 h-5 sm:w-7 sm:h-7 md:w-10 md:h-10 object-contain drop-shadow-md shrink-0"
+                            className="w-[clamp(1.5rem,1.5vw,3.75rem)] h-[clamp(1.5rem,1.5vw,3.75rem)] object-contain drop-shadow-md shrink-0"
                         />
                     </div>
                 </div>

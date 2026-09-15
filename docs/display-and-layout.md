@@ -13,10 +13,13 @@ concrete grid on mount and on every `resize`:
 - `cardWidth` prefers `clamp(190, vw * 0.095, 420)` px and is reduced only when required
   for the selected layout to fit; `cardHeight` = `cardWidth * 225/211` (original aspect ratio).
 - `gap` = `clamp(24, vw * 0.012, 48)` px; `paddingX` = `clamp(48, vw * 0.04, 160)` px.
-- `bottomReserve` = `clamp(160, vh * 0.15, 320)` px — leaves room for the page dots, the
-  bottom quote, and the mascot.
+- `topInset` = `clamp(24, vh * 0.02, 56)` px. The bottom inset is measured from the rendered
+  quote height, its responsive bottom offset, and a 24px buffer. Together these are excluded
+  from the grid's usable height, so cards cannot overlap the quote.
 - The selected layout is centred rather than stretched edge-to-edge, preserving deliberate
   breathing room on 4K TV panels. SSR / no-`window` fallback is a 4x3 grid.
+- The quote uses `clamp(1.125rem, 1.35vw, 3.25rem)` and its spinach icon uses
+  `clamp(1.5rem, 1.5vw, 3.75rem)`, so both scale smoothly from laptop previews to 4K TVs.
 
 `headerHeight` comes from `App.js`, which measures the real rendered header with a
 `ResizeObserver` (the header's height changes by breakpoint — the clock stacks under the
