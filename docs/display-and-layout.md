@@ -10,8 +10,11 @@ concrete grid on mount and on every `resize`:
 
 - The grid is chosen from compact layouts: 4x3, 5x3, 6x3, 6x4, 7x4, and 8x4. It selects
   the smallest layout that fits the current maker count, then paginates after 8x4.
-- `cardWidth` prefers `clamp(190, vw * 0.095, 420)` px and is reduced only when required
-  for the selected layout to fit; `cardHeight` = `cardWidth * 225/211` (original aspect ratio).
+- Card width scales by layout density rather than a single viewport cap: 4 columns use 80% of
+  their available column width, 5 use 85%, 6 use 90%, 7 use 95%, and 8 use 100% (capped at
+  560px). This makes low-attendance layouts deliberately larger while retaining breathing room.
+  Card height = `cardWidth * 225/211` (original aspect ratio), and width is reduced only when
+  required for the selected layout to fit vertically.
 - `gap` = `clamp(24, vw * 0.012, 48)` px; `paddingX` = `clamp(48, vw * 0.04, 160)` px.
 - `topInset` = `clamp(24, vh * 0.02, 56)` px. The bottom inset is measured from the rendered
   quote height, its responsive bottom offset, and a 24px buffer. Together these are excluded

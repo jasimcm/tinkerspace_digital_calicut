@@ -8,13 +8,21 @@ import {
 // Height/width ratio of the original card design — preserved as cards scale.
 const CARD_ASPECT_RATIO = 225 / 211;
 const MIN_CARD_WIDTH = 190;
-const MAX_CARD_WIDTH = 420;
+const MAX_CARD_WIDTH = 560;
 
 const clamp = (min, value, max) => Math.min(max, Math.max(min, value));
 
 function getMascotSize(vw) {
   // Must mirror .tinkerhub-mascot's clamp(8rem, 13vw, 12rem) footprint.
   return clamp(128, vw * 0.13, 192);
+}
+
+function getColumnFillRatio(cols) {
+  if (cols <= 4) return 0.8;
+  if (cols === 5) return 0.85;
+  if (cols <= 6) return 0.9;
+  if (cols === 7) return 0.95;
+  return 1;
 }
 
 function computeLayout(headerHeight, makerCount, footerHeight) {
@@ -33,7 +41,7 @@ function computeLayout(headerHeight, makerCount, footerHeight) {
   const dimensionsFor = ({ cols, rows }) => {
     const widthLimit = (availableWidth - gap * (cols - 1)) / cols;
     const heightLimit = ((availableHeight - gap * (rows - 1)) / rows) / CARD_ASPECT_RATIO;
-    const preferredWidth = clamp(MIN_CARD_WIDTH, vw * 0.095, MAX_CARD_WIDTH);
+    const preferredWidth = Math.min(widthLimit * getColumnFillRatio(cols), MAX_CARD_WIDTH);
     const cardWidth = Math.max(MIN_CARD_WIDTH, Math.min(preferredWidth, widthLimit, heightLimit));
     const cardHeight = cardWidth * CARD_ASPECT_RATIO;
     const mascotReservation = getMascotReservation({ cardWidth, cardHeight, mascotSize });
