@@ -9,11 +9,12 @@ tablets, desktops, and Android TV panels — there is no scrolling and no user n
 concrete grid on mount and on every `resize`:
 
 - The grid is chosen from horizontal-first layouts: 5x2 (up to 9 makers), 6x2 (up to 11),
-  7x2 (up to 13), 8x2 (up to 15), 8x3 (up to 23), and 8x4 (up to 31). Capacity is calculated
-  after reserving the mascot area, and attendance above 31 paginates.
+  7x2 (up to 13), 7x3 (up to 20), and 10x4 (up to 39). Capacity is calculated after reserving
+  the mascot area, and attendance above 39 paginates.
 - Card width scales by layout density rather than a single viewport cap: 5 columns use 85% of
-  their available column width, 6 use 90%, 7 use 95%, and 8 use 100% (capped at 520px). This
-  keeps low-attendance layouts readable without oversized portraits.
+  their available column width, 6 use 90%, 7 use 95%, and denser layouts use 100% (capped at
+  520px). Cards can shrink to 120px when required for a dense layout to fit the viewport,
+  preventing overflow while keeping low-attendance layouts readable.
   Card height = `cardWidth * 225/211` (original aspect ratio), and width is reduced only when
   required for the selected layout to fit vertically.
 - `gap` = `clamp(24, vw * 0.012, 48)` px; `paddingX` = `clamp(48, vw * 0.04, 160)` px.

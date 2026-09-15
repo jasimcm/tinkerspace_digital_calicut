@@ -31,7 +31,7 @@
 }
 
 .tinkerhub-mascot {
-  width: clamp(8rem, 13vw, 12rem);
+  width: clamp(8rem, 13vw, 11rem);
   aspect-ratio: 1;
   position: relative;
   transform-origin: bottom right;

@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-
-// Height reserved below the image for the name/subtitle text (UserInfo).
-const INFO_HEIGHT = 47;
+import { getCardMetrics } from '../../utils/layout/cardMetrics';
 
 export default function CardImage({ src, alt, purpose, purposeColor, cardHeight }) {
   const [imageError, setImageError] = useState(false);
   const firstLetter = alt ? alt.charAt(0).toUpperCase() : '?';
-  const imageHeight = cardHeight - INFO_HEIGHT;
+  const { imageHeight, purposeFontSize } = getCardMetrics(cardHeight);
 
   return (
     <div
@@ -15,7 +13,7 @@ export default function CardImage({ src, alt, purpose, purposeColor, cardHeight 
     >
       {(!src || imageError) ? (
         <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
-          <span className="text-6xl font-bold">{firstLetter}</span>
+          <span className="font-bold" style={{ fontSize: `${Math.min(imageHeight * 0.45, 56)}px` }}>{firstLetter}</span>
         </div>
       ) : (
         <img
@@ -26,10 +24,15 @@ export default function CardImage({ src, alt, purpose, purposeColor, cardHeight 
         />
       )}
       {purpose && (
-        <div className="absolute bottom-2 left-2 z-10">
+        <div className="absolute z-10" style={{ bottom: `${Math.max(5, cardHeight * 0.04)}px`, left: `${Math.max(5, cardHeight * 0.04)}px` }}>
           <span 
-            className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm backdrop-blur-md"
-            style={{ backgroundColor: `${purposeColor}dd`, color: '#222' }}
+            className="inline-block rounded-full font-bold uppercase tracking-wider shadow-sm backdrop-blur-md"
+            style={{
+              backgroundColor: `${purposeColor}dd`,
+              color: '#222',
+              fontSize: `${purposeFontSize}px`,
+              padding: `${Math.max(2, purposeFontSize * 0.35)}px ${Math.max(5, purposeFontSize * 0.9)}px`,
+            }}
           >
             {purpose}
           </span>

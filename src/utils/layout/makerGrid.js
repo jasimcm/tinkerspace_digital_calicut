@@ -2,16 +2,12 @@ export const GRID_LAYOUTS = [
   { cols: 5, rows: 2 },
   { cols: 6, rows: 2 },
   { cols: 7, rows: 2 },
-  { cols: 8, rows: 2 },
-  { cols: 8, rows: 3 },
-  { cols: 8, rows: 4 },
+  { cols: 7, rows: 3 },
 ];
 
-export function getMascotReservation({ cardWidth, cardHeight, mascotSize }) {
-  return {
-    cols: Math.max(1, Math.ceil(mascotSize / cardWidth)),
-    rows: Math.max(1, Math.ceil(mascotSize / cardHeight)),
-  };
+export function getMascotReservation() {
+  // The mascot is constrained to one card-sized area, so no extra grid cells are wasted.
+  return { cols: 1, rows: 1 };
 }
 
 export function getMakerCardsPerPage(cols, rows, reservation = { cols: 1, rows: 1 }) {

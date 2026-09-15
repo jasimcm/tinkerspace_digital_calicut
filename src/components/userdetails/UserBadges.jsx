@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { USER_BADGES, BADGE_METADATA } from '../../utils/constants/badgeConfig';
+import { getCardMetrics } from '../../utils/layout/cardMetrics';
 
 function AchievementBadge({ type, alt }) {
   return (
@@ -16,25 +17,20 @@ function AchievementBadge({ type, alt }) {
   );
 }
 
-// Height reserved below the image for the name/subtitle text (UserInfo) —
-// must match UserImage.jsx so the badge straddles the image/info boundary.
-const INFO_HEIGHT = 47;
-
 export default function UserBadges({ name, cardHeight }) {
   const userBadges = USER_BADGES[name] || [];
-  const imageHeight = cardHeight - INFO_HEIGHT;
+  const { imageHeight, badgeSize } = getCardMetrics(cardHeight);
   return (
     <div style={{
       position: 'absolute',
-      top: `${imageHeight - 40}px`,
-      right: '4px',
-      width: '56px',
-      height: '56px',
-      transform: 'translateY(-50%)',
+      top: `${imageHeight - badgeSize * 0.55}px`,
+      right: `${Math.max(3, cardHeight * 0.02)}px`,
+      width: `${badgeSize}px`,
+      height: `${badgeSize}px`,
       zIndex: 2,
       display: 'flex',
       flexDirection: 'column',
-      gap: '4px'
+      gap: `${Math.max(2, badgeSize * 0.07)}px`
     }}>
       {userBadges
         .sort((a, b) => BADGE_METADATA[a].priority - BADGE_METADATA[b].priority)

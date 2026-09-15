@@ -7,14 +7,14 @@ import {
 
 // Height/width ratio of the original card design — preserved as cards scale.
 const CARD_ASPECT_RATIO = 225 / 211;
-const MIN_CARD_WIDTH = 190;
+const MIN_CARD_WIDTH = 180;
 const MAX_CARD_WIDTH = 520;
 
 const clamp = (min, value, max) => Math.min(max, Math.max(min, value));
 
 function getMascotSize(vw) {
   // Must mirror .tinkerhub-mascot's clamp(8rem, 13vw, 12rem) footprint.
-  return clamp(128, vw * 0.13, 192);
+  return clamp(128, vw * 0.13, 176);
 }
 
 function getColumnFillRatio(cols) {

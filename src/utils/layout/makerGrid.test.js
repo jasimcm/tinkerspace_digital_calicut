@@ -11,18 +11,18 @@ describe('maker grid layout', () => {
     expect(getMakerCardsPerPage(8, 4, { cols: 2, rows: 2 })).toBe(28);
   });
 
-  it('expands the mascot reservation when cards are smaller than the mascot', () => {
-    expect(getMascotReservation({ cardWidth: 240, cardHeight: 256, mascotSize: 192 })).toEqual({ cols: 1, rows: 1 });
-    expect(getMascotReservation({ cardWidth: 150, cardHeight: 160, mascotSize: 192 })).toEqual({ cols: 2, rows: 2 });
+  it('uses one bottom-right cell for the mascot at every grid density', () => {
+    expect(getMascotReservation({ cardWidth: 240, cardHeight: 256, mascotSize: 176 })).toEqual({ cols: 1, rows: 1 });
+    expect(getMascotReservation({ cardWidth: 180, cardHeight: 192, mascotSize: 176 })).toEqual({ cols: 1, rows: 1 });
   });
 
   it('selects the smallest layout that has capacity for all current makers', () => {
     const capacity = ({ cols, rows }) => cols * rows - 1;
     expect(getGridLayout(5, capacity)).toEqual({ cols: 5, rows: 2 });
     expect(getGridLayout(11, capacity)).toEqual({ cols: 6, rows: 2 });
-    expect(getGridLayout(15, capacity)).toEqual({ cols: 8, rows: 2 });
-    expect(getGridLayout(16, capacity)).toEqual({ cols: 8, rows: 3 });
-    expect(getGridLayout(99, capacity)).toEqual({ cols: 8, rows: 4 });
+    expect(getGridLayout(13, capacity)).toEqual({ cols: 7, rows: 2 });
+    expect(getGridLayout(20, capacity)).toEqual({ cols: 7, rows: 3 });
+    expect(getGridLayout(99, capacity)).toEqual({ cols: 7, rows: 3 });
   });
 
   it('reserves a bottom-right rectangle for the mascot', () => {
