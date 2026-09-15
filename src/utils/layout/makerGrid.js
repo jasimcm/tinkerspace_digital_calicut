@@ -1,10 +1,10 @@
 export const GRID_LAYOUTS = [
-  { cols: 3, rows: 1 },
-  { cols: 3, rows: 2 },
   { cols: 5, rows: 2 },
   { cols: 6, rows: 2 },
   { cols: 7, rows: 2 },
   { cols: 8, rows: 2 },
+  { cols: 8, rows: 3 },
+  { cols: 8, rows: 4 },
 ];
 
 export function getMascotReservation({ cardWidth, cardHeight, mascotSize }) {

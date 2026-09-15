@@ -18,10 +18,11 @@ describe('maker grid layout', () => {
 
   it('selects the smallest layout that has capacity for all current makers', () => {
     const capacity = ({ cols, rows }) => cols * rows - 1;
-    expect(getGridLayout(2, capacity)).toEqual({ cols: 3, rows: 1 });
-    expect(getGridLayout(5, capacity)).toEqual({ cols: 3, rows: 2 });
-    expect(getGridLayout(9, capacity)).toEqual({ cols: 5, rows: 2 });
-    expect(getGridLayout(99, capacity)).toEqual({ cols: 8, rows: 2 });
+    expect(getGridLayout(5, capacity)).toEqual({ cols: 5, rows: 2 });
+    expect(getGridLayout(11, capacity)).toEqual({ cols: 6, rows: 2 });
+    expect(getGridLayout(15, capacity)).toEqual({ cols: 8, rows: 2 });
+    expect(getGridLayout(16, capacity)).toEqual({ cols: 8, rows: 3 });
+    expect(getGridLayout(99, capacity)).toEqual({ cols: 8, rows: 4 });
   });
 
   it('reserves a bottom-right rectangle for the mascot', () => {
