@@ -13,6 +13,12 @@ adapted for the Calicut space:
 
 **Live site:** https://jasimcm.github.io/tinkerspace_digital_calicut/ (GitHub Pages)
 
+## Documentation
+
+In-depth context docs live in [`docs/`](docs/) — start at [`docs/README.md`](docs/README.md):
+architecture, data sources, display/layout, the mascot system, a component map, and a
+fuller development/deployment guide.
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) 22+

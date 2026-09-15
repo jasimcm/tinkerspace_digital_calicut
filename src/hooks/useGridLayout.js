@@ -1,47 +1,72 @@
 import { useState, useEffect } from 'react';
+import {
+  getGridLayout,
+  getMakerCardsPerPage,
+  getMascotReservation,
+} from '../utils/layout/makerGrid';
 
 // Height/width ratio of the original card design — preserved as cards scale.
 const CARD_ASPECT_RATIO = 225 / 211;
-const MIN_CARD_WIDTH = 130;
-const MAX_CARD_WIDTH = 240;
+const MIN_CARD_WIDTH = 190;
+const MAX_CARD_WIDTH = 420;
 
-function computeLayout(headerHeight) {
+const clamp = (min, value, max) => Math.min(max, Math.max(min, value));
+
+function getMascotSize(vw) {
+  // Must mirror .tinkerhub-mascot's clamp(8rem, 13vw, 12rem) footprint.
+  return clamp(128, vw * 0.13, 192);
+}
+
+function computeLayout(headerHeight, makerCount) {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  const cardWidth = Math.min(MAX_CARD_WIDTH, Math.max(MIN_CARD_WIDTH, vw * 0.13));
-  const cardHeight = cardWidth * CARD_ASPECT_RATIO;
-  const gap = Math.min(32, Math.max(12, vw * 0.02));
-  const paddingX = Math.min(48, Math.max(16, vw * 0.03));
+  const gap = clamp(24, vw * 0.012, 48);
+  const paddingX = clamp(48, vw * 0.04, 160);
 
   // Leave room below the grid for the page-dot indicator, bottom quote, and mascot.
-  const bottomReserve = Math.min(140, Math.max(60, vh * 0.14));
+  const bottomReserve = clamp(160, vh * 0.15, 320);
 
   const availableWidth = vw - paddingX * 2;
   const availableHeight = vh - headerHeight - bottomReserve;
 
-  let cols = Math.floor((availableWidth + gap) / (cardWidth + gap));
-  let rows = Math.floor((availableHeight + gap) / (cardHeight + gap));
+  const mascotSize = getMascotSize(vw);
+  const dimensionsFor = ({ cols, rows }) => {
+    const widthLimit = (availableWidth - gap * (cols - 1)) / cols;
+    const heightLimit = ((availableHeight - gap * (rows - 1)) / rows) / CARD_ASPECT_RATIO;
+    const preferredWidth = clamp(MIN_CARD_WIDTH, vw * 0.095, MAX_CARD_WIDTH);
+    const cardWidth = Math.max(MIN_CARD_WIDTH, Math.min(preferredWidth, widthLimit, heightLimit));
+    const cardHeight = cardWidth * CARD_ASPECT_RATIO;
+    const mascotReservation = getMascotReservation({ cardWidth, cardHeight, mascotSize });
+    return {
+      cols,
+      rows,
+      cardWidth,
+      cardHeight,
+      mascotReservation,
+      cardsPerPage: getMakerCardsPerPage(cols, rows, mascotReservation),
+    };
+  };
 
-  if (cols < 1) cols = 1;
-  if (rows < 1) rows = 1;
-
-  return { cols, rows, cardWidth, cardHeight, gap, paddingX };
+  const selected = getGridLayout(makerCount, (layout) => dimensionsFor(layout).cardsPerPage);
+  return { ...dimensionsFor(selected), gap, paddingX };
 }
 
-export default function useGridLayout(headerHeight = 180) {
+export default function useGridLayout(headerHeight = 180, makerCount = 0) {
   const [layout, setLayout] = useState(() =>
-    typeof window === 'undefined' ? { cols: 7, rows: 3, cardWidth: 211, cardHeight: 225, gap: 32, paddingX: 48 } : computeLayout(headerHeight)
+    typeof window === 'undefined'
+      ? { cols: 4, rows: 3, cardWidth: 211, cardHeight: 225, gap: 32, paddingX: 48, mascotReservation: { cols: 1, rows: 1 }, cardsPerPage: 11 }
+      : computeLayout(headerHeight, makerCount)
   );
 
   useEffect(() => {
     function updateLayout() {
-      setLayout(computeLayout(headerHeight));
+      setLayout(computeLayout(headerHeight, makerCount));
     }
     updateLayout();
     window.addEventListener('resize', updateLayout);
     return () => window.removeEventListener('resize', updateLayout);
-  }, [headerHeight]);
+  }, [headerHeight, makerCount]);
 
   return layout;
 }

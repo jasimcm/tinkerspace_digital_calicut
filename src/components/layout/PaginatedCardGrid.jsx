@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import CardItem from '../cards/UserCard';
 import useGridLayout from '../../hooks/useGridLayout';
-import { getMakerCardsPerPage } from '../../utils/layout/makerGrid';
+import { isMascotSlot } from '../../utils/layout/makerGrid';
 
 const PAGE_INTERVAL = 20000;
 
 export default function PaginatedCardGrid({ data, isActive = true, headerHeight }) {
-  const { cols, rows, cardWidth, cardHeight, gap, paddingX } = useGridLayout(headerHeight);
+  const {
+    cols, rows, cardWidth, cardHeight, gap, paddingX, mascotReservation, cardsPerPage,
+  } = useGridLayout(headerHeight, data.length);
   const totalSlots = cols * rows;
-  // Keep the bottom-right grid cell clear for the fixed mascot overlay.
-  const cardsPerPage = getMakerCardsPerPage(cols, rows);
   const totalPages = Math.ceil(data.length / cardsPerPage) || 1;
   const [page, setPage] = useState(0);
   const intervalRef = useRef();
@@ -38,7 +38,7 @@ export default function PaginatedCardGrid({ data, isActive = true, headerHeight 
   const start = safePage * cardsPerPage;
   const end = start + cardsPerPage;
   const pageCards = data.slice(start, end);
-  const emptySlots = totalSlots - pageCards.length;
+  let cardIndex = 0;
 
   return (
     <div className="flex flex-col w-full h-full relative font-mono">
@@ -48,17 +48,30 @@ export default function PaginatedCardGrid({ data, isActive = true, headerHeight 
           display: 'grid',
           gridTemplateColumns: `repeat(${cols}, ${cardWidth}px)`,
           gridTemplateRows: `repeat(${rows}, ${cardHeight}px)`,
-          justifyContent: 'space-between',
-          alignContent: 'start',
-          rowGap: `${gap}px`,
+          justifyContent: 'center',
+          alignContent: 'center',
+          gap: `${gap}px`,
           paddingLeft: `${paddingX}px`,
           paddingRight: `${paddingX}px`,
         }}
       >
-        {pageCards.map((card, index) => {
+        {Array.from({ length: totalSlots }).map((_, slotIndex) => {
+          const reservedForMascot = isMascotSlot(slotIndex, cols, rows, mascotReservation);
+          const card = reservedForMascot ? null : pageCards[cardIndex++];
+
+          if (!card) {
+            return (
+              <div
+                key={`empty-${slotIndex}`}
+                aria-hidden="true"
+                style={{ background: 'transparent', width: cardWidth, height: cardHeight }}
+              />
+            );
+          }
+
           return (
             <div
-              key={card.membershipId || card.name || index}
+              key={card.membershipId || card.name || slotIndex}
               className="transition-opacity duration-500"
               style={{
                 width: cardWidth,
@@ -67,14 +80,6 @@ export default function PaginatedCardGrid({ data, isActive = true, headerHeight 
             >
               <CardItem card={card} CARD_HEIGHT={cardHeight} />
             </div>
-          );
-        })}
-        {Array.from({ length: emptySlots }).map((_, i) => {
-          return (
-            <div
-              key={`empty-${i}`}
-              style={{ background: 'transparent', width: cardWidth, height: cardHeight }}
-            />
           );
         })}
       </div>
