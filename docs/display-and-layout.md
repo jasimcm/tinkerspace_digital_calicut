@@ -9,12 +9,12 @@ tablets, desktops, and Android TV panels — there is no scrolling and no user n
 concrete grid on mount and on every `resize`:
 
 - The grid is chosen from horizontal-first layouts: 5x2 (up to 9 makers), 6x2 (up to 11),
-  7x2 (up to 13), 7x3 (up to 20), and 10x4 (up to 39). Capacity is calculated after reserving
-  the mascot area, and attendance above 39 paginates.
+  7x2 (up to 13), 7x3 (up to 20), and 8x4 (up to 31). Capacity is calculated after reserving
+  the mascot area, and attendance above 31 paginates.
 - Card width scales by layout density rather than a single viewport cap: 5 columns use 85% of
   their available column width, 6 use 90%, 7 use 95%, and denser layouts use 100% (capped at
-  520px). Cards can shrink to 120px when required for a dense layout to fit the viewport,
-  preventing overflow while keeping low-attendance layouts readable.
+  520px). Cards retain a 180px minimum width except for the 8x4 final page, where they may
+  shrink to 140px and their image, badge, and typography metrics scale proportionally.
   Card height = `cardWidth * 225/211` (original aspect ratio), and width is reduced only when
   required for the selected layout to fit vertically.
 - `gap` = `clamp(24, vw * 0.012, 48)` px; `paddingX` = `clamp(48, vw * 0.04, 160)` px.
@@ -35,10 +35,8 @@ pill on smaller screens), so the grid always gets the true leftover space.
 [`PaginatedCardGrid.jsx`](../src/components/layout/PaginatedCardGrid.jsx)
 
 - `totalSlots` = `cols * rows`.
-- `cardsPerPage` = `totalSlots - mascotReservedSlots`. The bottom-right rectangle is reserved
-  for the mascot overlay. Its width and height are calculated from the mascot's responsive
-  `clamp(8rem, 13vw, 12rem)` footprint versus the current card size, so it reserves one or
-  more cells when required.
+- `cardsPerPage` = `totalSlots - mascotReservedSlots`. Exactly one bottom-right cell is reserved
+  for the mascot overlay, keeping the rest of every page available to maker cards.
 - `totalPages` = `ceil(data.length / cardsPerPage)` (min 1).
 - A `PAGE_INTERVAL` (20s) timer advances `page = (page + 1) % totalPages`.
 - `page` resets to 0 when `isActive`, `cols`, or `rows` change.

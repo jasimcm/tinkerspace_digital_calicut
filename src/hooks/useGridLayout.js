@@ -41,7 +41,9 @@ function computeLayout(headerHeight, makerCount, footerHeight) {
     const widthLimit = (availableWidth - gap * (cols - 1)) / cols;
     const heightLimit = ((availableHeight - gap * (rows - 1)) / rows) / CARD_ASPECT_RATIO;
     const preferredWidth = Math.min(widthLimit * getColumnFillRatio(cols), MAX_CARD_WIDTH);
-    const cardWidth = Math.max(MIN_CARD_WIDTH, Math.min(preferredWidth, widthLimit, heightLimit));
+    // The final 8x4 page may be more compact; its card internals scale with height.
+    const minimumWidth = rows >= 4 ? 140 : MIN_CARD_WIDTH;
+    const cardWidth = Math.max(minimumWidth, Math.min(preferredWidth, widthLimit, heightLimit));
     const cardHeight = cardWidth * CARD_ASPECT_RATIO;
     const mascotReservation = getMascotReservation({ cardWidth, cardHeight, mascotSize });
     return {

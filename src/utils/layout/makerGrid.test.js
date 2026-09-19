@@ -22,7 +22,8 @@ describe('maker grid layout', () => {
     expect(getGridLayout(11, capacity)).toEqual({ cols: 6, rows: 2 });
     expect(getGridLayout(13, capacity)).toEqual({ cols: 7, rows: 2 });
     expect(getGridLayout(20, capacity)).toEqual({ cols: 7, rows: 3 });
-    expect(getGridLayout(99, capacity)).toEqual({ cols: 7, rows: 3 });
+    expect(getGridLayout(21, capacity)).toEqual({ cols: 8, rows: 4 });
+    expect(getGridLayout(99, capacity)).toEqual({ cols: 8, rows: 4 });
   });
 
   it('reserves a bottom-right rectangle for the mascot', () => {

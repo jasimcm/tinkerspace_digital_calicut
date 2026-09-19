@@ -3,6 +3,7 @@ export const GRID_LAYOUTS = [
   { cols: 6, rows: 2 },
   { cols: 7, rows: 2 },
   { cols: 7, rows: 3 },
+  { cols: 8, rows: 4 },
 ];
 
 export function getMascotReservation() {
