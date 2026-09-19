@@ -13,8 +13,9 @@ concrete grid on mount and on every `resize`:
   the mascot area, and attendance above 31 paginates.
 - Card width scales by layout density rather than a single viewport cap: 5 columns use 85% of
   their available column width, 6 use 90%, 7 use 95%, and denser layouts use 100% (capped at
-  520px). Cards retain a 180px minimum width except for the 8x4 final page, where they may
-  shrink to 140px and their image, badge, and typography metrics scale proportionally.
+  520px). Each layout is constrained by both its measured width and height bounds, so it never
+  overflows the usable screen area. Image, badge, and typography metrics scale proportionally
+  whenever a denser layout needs smaller cards.
   Card height = `cardWidth * 225/211` (original aspect ratio), and width is reduced only when
   required for the selected layout to fit vertically.
 - `gap` = `clamp(24, vw * 0.012, 48)` px; `paddingX` = `clamp(48, vw * 0.04, 160)` px.

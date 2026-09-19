@@ -7,7 +7,6 @@ import {
 
 // Height/width ratio of the original card design — preserved as cards scale.
 const CARD_ASPECT_RATIO = 225 / 211;
-const MIN_CARD_WIDTH = 180;
 const MAX_CARD_WIDTH = 520;
 
 const clamp = (min, value, max) => Math.min(max, Math.max(min, value));
@@ -24,6 +23,16 @@ function getColumnFillRatio(cols) {
   return 1;
 }
 
+export function getFittingCardWidth({ cols, rows, availableWidth, availableHeight, gap }) {
+  const widthLimit = (availableWidth - gap * (cols - 1)) / cols;
+  const heightLimit = ((availableHeight - gap * (rows - 1)) / rows) / CARD_ASPECT_RATIO;
+  const preferredWidth = Math.min(widthLimit * getColumnFillRatio(cols), MAX_CARD_WIDTH);
+
+  // Never enforce a minimum that exceeds the measured grid bounds. This keeps every
+  // layout inside the viewport; smaller cards use the existing proportional internals.
+  return Math.max(1, Math.min(preferredWidth, widthLimit, heightLimit));
+}
+
 function computeLayout(headerHeight, makerCount, footerHeight) {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -38,12 +47,9 @@ function computeLayout(headerHeight, makerCount, footerHeight) {
 
   const mascotSize = getMascotSize(vw);
   const dimensionsFor = ({ cols, rows }) => {
-    const widthLimit = (availableWidth - gap * (cols - 1)) / cols;
-    const heightLimit = ((availableHeight - gap * (rows - 1)) / rows) / CARD_ASPECT_RATIO;
-    const preferredWidth = Math.min(widthLimit * getColumnFillRatio(cols), MAX_CARD_WIDTH);
-    // The final 8x4 page may be more compact; its card internals scale with height.
-    const minimumWidth = rows >= 4 ? 140 : MIN_CARD_WIDTH;
-    const cardWidth = Math.max(minimumWidth, Math.min(preferredWidth, widthLimit, heightLimit));
+    const cardWidth = getFittingCardWidth({
+      cols, rows, availableWidth, availableHeight, gap,
+    });
     const cardHeight = cardWidth * CARD_ASPECT_RATIO;
     const mascotReservation = getMascotReservation({ cardWidth, cardHeight, mascotSize });
     return {

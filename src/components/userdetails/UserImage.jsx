@@ -21,6 +21,7 @@ export default function CardImage({ src, alt, purpose, purposeColor, cardHeight 
           alt={alt}
           onError={() => setImageError(true)}
           className="w-full h-full object-cover transition-all"
+          style={{ objectPosition: 'center 25%' }}
         />
       )}
       {purpose && (
