@@ -49,7 +49,15 @@ pill on smaller screens), so the grid always gets the true leftover space.
 - Page dots render only when `totalPages > 1`, bottom-left, aligned to `paddingX`.
 
 The grid itself is a CSS `grid` with explicit `repeat(cols, cardWidth px)` /
-`repeat(rows, cardHeight px)` and `justify-content: space-between`.
+`repeat(rows, cardHeight px)`, centred within the usable region.
+
+## Card content scaling
+
+[`utils/layout/cardMetrics.js`](../src/utils/layout/cardMetrics.js) derives the image/text split,
+badge size, purpose-label size, typography, and padding from `cardHeight`. This keeps card
+content proportional when the layout becomes denser. The profile image keeps the larger share
+of each card; the metadata footer is one line, combining distinct `workingOn` and `projectName`
+values. When that line is too wide, it scrolls horizontally rather than wrapping or clipping.
 
 ## Header
 

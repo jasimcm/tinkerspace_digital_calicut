@@ -15,11 +15,11 @@ current app (kept for future use / previous display variants).
 | File | Props | Notes |
 |---|---|---|
 | [`components/layout/Header.jsx`](../src/components/layout/Header.jsx) | `totalMakers`, `isDarkMode`, `setManualTheme` | `React.memo`. Own clock (1s) + weather (5min) timers. Corner-vs-stacked clock by `innerWidth>=1200 && innerHeight>=600`. |
-| [`components/layout/PaginatedCardGrid.jsx`](../src/components/layout/PaginatedCardGrid.jsx) | `data`, `isActive`, `headerHeight` | Grid + 20s page rotation + page dots. `safePage` clamp guards the shrinking-data boundary. |
-| [`components/cards/UserCard.jsx`](../src/components/cards/UserCard.jsx) | `card`, `CARD_HEIGHT` | `React.memo`. Resolves badges + purpose colour; measures name overflow to toggle the `nameScroll` marquee. |
-| [`components/userdetails/UserImage.jsx`](../src/components/userdetails/UserImage.jsx) | `src`, `alt`, `purpose`, `purposeColor`, `cardHeight` | Avatar with first-letter fallback on missing/broken `src`. Purpose pill overlay. Reserves `INFO_HEIGHT = 47` for the text row. |
-| [`components/userdetails/UserBadges.jsx`](../src/components/userdetails/UserBadges.jsx) | `name`, `cardHeight` | Looks up `USER_BADGES[name]`, sorts by `BADGE_METADATA.priority`, renders `public/images/<type>.png`. Positioned to straddle the image/info boundary — `INFO_HEIGHT` must match `UserImage`. |
-| [`components/userdetails/UserInfo.jsx`](../src/components/userdetails/UserInfo.jsx) | `card`, `textRef`, `containerRef`, `isOverflowing` | Name (marquee when overflowing) + subtitle `workingOn || projectName || nbsp`. |
+| [`components/layout/PaginatedCardGrid.jsx`](../src/components/layout/PaginatedCardGrid.jsx) | `data`, `isActive`, `headerHeight`, `footerHeight` | Centred grid + 20s page rotation + page dots. Reserves one bottom-right mascot cell; `safePage` guards the shrinking-data boundary. |
+| [`components/cards/UserCard.jsx`](../src/components/cards/UserCard.jsx) | `card`, `CARD_HEIGHT` | `React.memo`. Resolves badges + purpose colour; measures name overflow to toggle the name marquee. |
+| [`components/userdetails/UserImage.jsx`](../src/components/userdetails/UserImage.jsx) | `src`, `alt`, `purpose`, `purposeColor`, `cardHeight` | Avatar with first-letter fallback, upward face framing, and a proportionally sized purpose pill. |
+| [`components/userdetails/UserBadges.jsx`](../src/components/userdetails/UserBadges.jsx) | `name`, `cardHeight` | Looks up and prioritises badges, then sizes and positions them from the shared card metrics. |
+| [`components/userdetails/UserInfo.jsx`](../src/components/userdetails/UserInfo.jsx) | `card`, `cardHeight`, `textRef`, `containerRef`, `isOverflowing` | Name marquee plus one-line combined `workingOn` / `projectName` metadata; long metadata scrolls horizontally. |
 | [`components/mascot/TinkerHubMascot.jsx`](../src/components/mascot/TinkerHubMascot.jsx) | `makerCount`, `currentView`, `isVisible` | See [mascot.md](./mascot.md). |
 
 ## Mascot support modules
@@ -31,11 +31,12 @@ current app (kept for future use / previous display variants).
 
 | File | Notes |
 |---|---|
-| [`hooks/useGridLayout.js`](../src/hooks/useGridLayout.js) | Viewport -> `{cols, rows, cardWidth, cardHeight, gap, paddingX}`, recomputed on `resize`. |
+| [`hooks/useGridLayout.js`](../src/hooks/useGridLayout.js) | Chooses 5×2 → 8×4 and derives a card size that fits the usable viewport; recomputed on `resize`. |
 | [`utils/api/fetchData.js`](../src/utils/api/fetchData.js) | `GET /checkin/active`. Returns `[]` on any error. |
 | [`utils/api/weatherService.js`](../src/utils/api/weatherService.js) | open-meteo current weather. Returns `null` on error. |
 | [`utils/helpers/removeDuplicates.js`](../src/utils/helpers/removeDuplicates.js) | Dedupe by `membershipId`. |
 | [`utils/layout/makerGrid.js`](../src/utils/layout/makerGrid.js) | `getMakerCardsPerPage` = slots − 1 (reserved mascot cell). |
+| [`utils/layout/cardMetrics.js`](../src/utils/layout/cardMetrics.js) | Shared proportional image, badge, label, text, and padding metrics for one card. |
 | [`utils/constants/badgeConfig.js`](../src/utils/constants/badgeConfig.js) | Hard-coded name -> badge map + metadata. |
 
 ## Dormant / unused modules
@@ -63,10 +64,12 @@ suites:
 - `components/mascot/playback.test.js`
 - `components/mascot/watchdog.test.js`
 - `utils/layout/makerGrid.test.js`
+- `utils/layout/cardMetrics.test.js`
+- `hooks/useGridLayout.test.js`
 
-All current test coverage is on the mascot system and the grid slot math. `App`,
-`Header`, `PaginatedCardGrid`, the card components, `fetchData`, and `weatherService`
-have no tests.
+Current layout coverage includes grid capacities, every configured grid's viewport fit, and
+proportional card metrics. `App`, `Header`, `PaginatedCardGrid`, rendered card components,
+`fetchData`, and `weatherService` have no direct tests.
 
 ## Static assets
 

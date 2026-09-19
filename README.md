@@ -11,6 +11,16 @@ adapted for the Calicut space:
 - The Calendar Dashboard view (which needs a separate SpaceCalendar API key) has been
   removed — this instance only shows the maker check-in grid.
 
+## Display layout
+
+The display is tuned for 4K TV panels and automatically selects the smallest horizontal-first
+grid that fits the current attendance: `5×2`, `6×2`, `7×2`, `7×3`, then `8×4`. The bottom-right
+cell is always reserved for the mascot; above the resulting page capacity (31 cards), the grid
+rotates pages every 20 seconds. Card size is constrained by the usable viewport in both
+directions, so no layout can overflow the screen. Profile images, badges, purpose labels, and
+text scale with the selected card size; long project metadata remains one line and scrolls only
+when needed.
+
 **Live site:** https://jasimcm.github.io/tinkerspace_digital_calicut/ (GitHub Pages)
 
 ## Documentation

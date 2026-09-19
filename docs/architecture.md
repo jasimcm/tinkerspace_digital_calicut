@@ -23,7 +23,7 @@ src/
   components/
     layout/Header.jsx          Status pill (space name, maker count, temp, theme toggle) + clock
     layout/PaginatedCardGrid.jsx  Grid of maker cards + auto page rotation + page dots
-    cards/UserCard.jsx         One maker card (image + badges + name/subtitle)
+    cards/UserCard.jsx         One maker card (image + badges + name/project metadata)
     userdetails/               UserImage, UserBadges, UserInfo — card sub-parts
     mascot/                    Mascot system (see mascot.md)
     animations/, layout/*      Dormant visual effects (see components.md)
@@ -32,7 +32,8 @@ src/
     api/fetchData.js           GET /checkin/active
     api/weatherService.js      open-meteo current weather -> {isRaining, temperature, ...}
     helpers/removeDuplicates.js  Dedupe makers by membershipId
-    layout/makerGrid.js        Cards-per-page = grid slots minus the reserved mascot slot
+    layout/makerGrid.js        Grid progression and cards-per-page = slots minus mascot slot
+    layout/cardMetrics.js      Proportional card-content sizing
     constants/badgeConfig.js   Name -> badge mapping (hard-coded)
 mock-server/                   Node http server: GET /health, GET /checkin/active
 scripts/                       Dev/build launchers that inject mock env vars
