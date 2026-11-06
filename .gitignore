@@ -28,3 +28,7 @@ pnpm-debug.log*
 
 
 .codegpt
+
+# playwright
+/test-results/
+/playwright-report/
