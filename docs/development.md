@@ -23,7 +23,7 @@ pnpm dev:mock     # app on :3000, mock API on :4010
 | `pnpm build` | `react-scripts build` -> `build/`, using `.env` |
 | `pnpm build:mock` | [`scripts/react-scripts-with-mocks.js`](../scripts/react-scripts-with-mocks.js) `build` — forces mock API env vars |
 | `pnpm test` | `react-scripts test` (Jest watch mode) |
-| `pnpm deploy` | `pnpm run build` then `gh-pages -d build` |
+| `pnpm run deploy` | `pnpm run build` then `gh-pages -d build` |
 
 ### How the mock wiring works
 
@@ -50,7 +50,7 @@ production build is pinned to whatever `.env` held when `pnpm build` ran.
 
 ## Deployment (GitHub Pages)
 
-- `pnpm deploy` builds and pushes `build/` to the `gh-pages` branch via the `gh-pages`
+- `pnpm run deploy` builds and pushes `build/` to the `gh-pages` branch via the `gh-pages`
   package.
 - `homepage: "."` in `package.json` -> relative asset paths, so it works under
   `https://<user>.github.io/<repo>/`.

@@ -26,4 +26,4 @@ reactions. There is no router, no backend of its own, and no auth — just the d
 The maker grid uses a horizontal-first 5×2 through 8×4 progression, reserves exactly one
 bottom-right cell for the mascot, and paginates above 31 makers. Card dimensions are bounded
 by the usable viewport, while profile images, labels, badges, and text scale with the card.
-Deployment is a static bundle published to GitHub Pages via `pnpm deploy`.
+Deployment is a static bundle published to GitHub Pages via `pnpm run deploy`.

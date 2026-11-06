@@ -85,12 +85,12 @@ Copy `.env.example` to `.env` and set:
 | `pnpm build` | Create a production build |
 | `pnpm build:mock` | Create a production build configured against local mock API URLs |
 | `pnpm test` | Run tests |
-| `pnpm deploy` | Build and publish to GitHub Pages |
+| `pnpm run deploy` | Build and publish to GitHub Pages |
 
 ## Deployment (GitHub Pages)
 
 ```bash
-pnpm deploy
+pnpm run deploy
 ```
 
 This builds the app and publishes `build/` to the `gh-pages` branch via the `gh-pages`
@@ -98,4 +98,4 @@ package. Enable GitHub Pages in the repo's **Settings → Pages**, with source s
 `gh-pages` branch, if it isn't already.
 
 Set `REACT_APP_API_BASE_URL` and `REACT_APP_SPACE_ID` in `.env` (not committed) before
-running `pnpm build` / `pnpm deploy` so the production bundle points at the real API.
+running `pnpm build` / `pnpm run deploy` so the production bundle points at the real API.
