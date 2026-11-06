@@ -31,8 +31,8 @@ export const fetchData = async () => {
         return await response.json();
     } catch (error) {
         console.error('Error fetching data:', error);
-        // Return empty array instead of throwing to prevent app crash
-        // The app will still work, just without data
-        return [];
+        // Return null (not []) so callers can tell a failed fetch apart from a
+        // genuinely empty space and keep showing the last known data.
+        return null;
     }
 };

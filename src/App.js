@@ -134,6 +134,9 @@ function App() {
         const fetchRecords = async () => {
             try {
                 const records = await fetchData();
+                // A failed fetch returns null; keep the last known data instead of
+                // blanking the grid (which made a lone card flash out and back).
+                if (records === null) return;
                 setData(removeDuplicates(records));
             } catch (error) {
                 console.error('Fetch failed:', error);
